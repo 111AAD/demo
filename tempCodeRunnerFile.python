@@ -1,0 +1,9 @@
+import matplotlib.pyplot as plt
+L_km = 20000
+fig, axes = plt.subplots(1, 2, figsize=(10, 2.2), sharey=True)
+axes[0].hlines(0, 0, L_km, colors='green', linewidth=8)
+axes[0].set_title('t = 0.1 s（刚发完100 bit）')
+axes[0].set_xlim(0, L_km)
+axes[0].set_xlabel('距离（km）')
+axes[0].set_yticks([])
+axes[0].grid(False)

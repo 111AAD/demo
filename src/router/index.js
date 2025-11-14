@@ -1,27 +1,33 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-
-Vue.use(VueRouter)
+import { createRouter, createWebHistory } from 'vue-router';
+import HomePage from '../views/HomePage.vue';
+import AboutPage from '@/views/aboutUs/aboutUs.vue';
+import ServicesPage from '../views/services/ServicesPage.vue';
+import Contact from '../views/contactUs/contactUs.vue';
+import ServicesDetail from '../views/services/ServicesDetial.vue';
+import CompanyHistory from '@/views/aboutUs/companyHistory.vue';
+import HonorPage from '@/views/aboutUs/honorPage.vue';
+import ProductPage from '@/views/product/ProductPage.vue';
+import ProductDetail from '@/views/product/productDetail.vue';
+import CustomerCase from '@/views/Cases/customerCase.vue';
+import CaseDetail from '@/views/Cases/caseDetail.vue';
 
 const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
-]
+  { path: '/', component: HomePage },
+  { path: '/about', component: AboutPage },
+  { path: '/services', component: ServicesPage },
+  { path: '/contact', component: Contact },
+  { path: '/servicesdetail', component: ServicesDetail },
+  { path: '/companyHistory', component: CompanyHistory },
+  { path: '/honor', component: HonorPage },
+  { path: '/product', component: ProductPage },
+  { path: '/customerCase', component: CustomerCase },
+  { path: '/caseDetail', component: CaseDetail },
+  {path: '/products/:id', component: ProductDetail,props: true},
+];
 
-const router = new VueRouter({
-  routes
-})
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
 
-export default router
+export default router;

@@ -1,32 +1,71 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
-    <router-view/>
+    
+     <AppNavbar/>
+    <router-view />
+    <AppFooter />
   </div>
 </template>
+<script>
+import AppNavbar from './components/AppNavbar.vue';
+import {ref , onMounted} from 'vue';
+import AppFooter from './components/Footer.vue';
+export default {
+  name: 'App',
+  components: {
+    AppNavbar,
+    AppFooter,
+  },
+setup(){
+  const isLoading = ref(true);
+  const loadingImage = require('../src/assets/maodei.gif');
+     const preloadImage = (src) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+          resolve();
+        };
+      });
+    };
+
+    onMounted(async () => {
+      await preloadImage(loadingImage); 
+      setTimeout(() => {
+        isLoading.value = false; 
+      }, 2000);
+    });
+
+    return { isLoading, loadingImage };
+}
+}
+</script>
 
 <style>
+body {
+  margin: 0; 
+  padding: 0; 
+  height:100%;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  position: relative;
 }
 
-nav {
-  padding: 30px;
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 1000; 
 }
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
 
-nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
