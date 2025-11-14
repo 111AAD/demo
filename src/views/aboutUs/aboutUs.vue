@@ -1,8 +1,8 @@
 <template>
     <div class="main">
-        <AboutBar/>
+        <AboutBar />
         <div class="about-wrapper">
-            <div class="about-us-container-text">
+            <div class="about-us-container-text" ref="textDOM">
                 <div class="about-header">
                     <h2 class="main-title">关于我们</h2>
                     <p class="sub-title">About Us</p>
@@ -18,7 +18,7 @@
                 </div>
             </div>
 
-            <div class="about-image-container">
+            <div class="about-image-container" ref="imageDOM">
                 <img class="about-image" src="@/assets/bg.jpg" />
             </div>
         </div>
@@ -46,26 +46,51 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import AboutBar from '@/components/AboutBar.vue';
-export default {
-    name: 'AboutPage',
-    methods: {
-        toCompanyHistory() {
-            this.$router.push('/companyHistory')
-        }
-    },
-    components: {
-        AboutBar,
-    }
+import { ref, onMounted, onUnmounted } from 'vue'
+const textDOM = ref(null)
+const imageDOM = ref(null)
+const isElementInViewport = (el) => {
+    const rect = el.getBoundingClientRect()
+    return (
+        rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.85 &&
+        rect.bottom >= 0
+    )
 }
+const handleScroll = () => {
+    const elements = [
+        textDOM.value,
+        imageDOM.value,
+    ].filter(el => el != null && el != undefined)
+    elements.forEach(el => {
+        if (isElementInViewport(el)){
+            el.classList.add('animate-in')
+        }
+    })
+}
+// 组件挂载后添加滚动监听
+onMounted(() => {
+    // 初始检查一次
+    setTimeout(handleScroll, 100)
+    
+    // 添加滚动监听
+    window.addEventListener('scroll', handleScroll)
+})
+
+// 组件卸载前移除监听
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
+})
+
 </script>
 
 <style scoped>
-.main{
-    width:100%;
-    height:fit-content;
+.main {
+    width: 100%;
+    height: fit-content;
 }
+
 .bottom-container {
     display: flex;
     flex-direction: column;
@@ -153,15 +178,21 @@ export default {
 }
 
 .about-image-container {
-    flex:1;
+    flex: 1;
     height: 70h;
     box-sizing: border-box;
     padding: 20px 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 1s ease, transform 1s ease;
 }
-
+.about-image-container.animate-in{
+    opacity: 1;
+    transform: translateX(0);
+}
 /* 图片样式 */
 .about-image {
     width: 100%;
@@ -176,8 +207,14 @@ export default {
     height: 100vh;
     box-sizing: border-box;
     background-color: transparent;
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 1s ease, transform 1s ease;
 }
-
+.about-us-container-text.animate-in{
+    opacity:1;
+    transform: translateX(0);
+}
 .about-intro {
     line-height: 2;
     font-size: 20px;

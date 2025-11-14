@@ -1,9 +1,9 @@
 <template>
     <div class="honor">
         <AboutBar />
-        <h2 class="title">荣誉资质</h2>
-        <p class="en-title">Honors and Qualifications</p>
-        <div class="timeline-container">
+        <h2 class="title" ref="titleDOM">荣誉资质</h2>
+        <p class="en-title" ref="entitleDOM">Honors and Qualifications</p>
+        <div class="timeline-container" ref="timelineDOM">
             <el-icon @click="prev" v-if="currentIndex > 0" class="circle">
                 <ArrowLeftBold />
             </el-icon>
@@ -14,7 +14,7 @@
             <div class="timeline-wrap">
                 <div class="timeline" ref="timelineRef">
                     <div class="timeline-item" v-for="(item, index) in HonorsData" :key="index">
-                            <img :src="item.img" />
+                        <img :src="item.img" />
                     </div>
                 </div>
             </div>
@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref,onMounted, onUnmounted  } from 'vue'
 
 import {
     ArrowRightBold,
@@ -43,6 +43,29 @@ const timelineRef = ref(null)
 const currentIndex = ref(0)
 const translateX = ref(0)
 const itemWidth = 400
+const timelineDOM = ref(null)
+const entitleDOM = ref(null)
+const titleDOM = ref(null)
+const isElementInViewport = (el) => {
+    const rect = el.getBoundingClientRect()
+    return (
+        rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.85 &&
+        rect.bottom >= 0
+    )
+}
+
+const handleScroll = () => {
+    const elements = [
+        entitleDOM.value,
+        titleDOM.value,
+        timelineDOM.value
+    ].filter(el => el !== null && el !== undefined)
+    elements.forEach(el => {
+        if (isElementInViewport(el)) {
+            el.classList.add('animate-in')
+        }
+    })
+}
 const prev = () => {
     if (currentIndex.value > 0) {
         currentIndex.value--
@@ -82,7 +105,18 @@ const HonorsData = [
 
 
 ]
+// 组件挂载后添加滚动监听
+onMounted(() => {
+    // 初始检查一次
+    setTimeout(handleScroll, 100)
 
+    // 添加滚动监听
+    window.addEventListener('scroll', handleScroll)
+})
+// 组件卸载前移除监听
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>
@@ -97,6 +131,14 @@ const HonorsData = [
     color: #0056b3;
     margin-bottom: 10px;
     margin-left: 122px;
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.title.animate-in {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .en-title {
@@ -105,6 +147,15 @@ const HonorsData = [
     color: #999;
     margin-bottom: 30px;
     margin-left: 122px;
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 1s ease, transform 1s ease;
+    transition-delay: 0.2s;
+}
+
+.en-title.animate-in {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .timeline-container {
@@ -113,6 +164,14 @@ const HonorsData = [
     align-items: center;
     width: 100%;
     height: 50vh;
+    opacity: 0;
+    transform: translateY(-50px);
+    transition: opacity 2s ease, transform 2s ease;
+}
+
+.timeline-container.animate-in {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .timeline-wrap {

@@ -15,7 +15,6 @@
                 </el-carousel-item>
             </el-carousel>
         </div>
-
         <div class="company-intro-section">
             <div class="intro-image" ref="introImage">
                 <el-carousel :interval="4000" :autoplay="true" height="80vh" arrow="always">
@@ -81,7 +80,6 @@
                 </div>
             </div>
         </div>
-        
         <div class="case-section">
             <div class="title-action">
                 <div class="section-header" ref="caseHeader">
@@ -175,7 +173,9 @@ const toProduct = () =>{
 const toCutCase = () => {
     router.push('/caseDetail')
 }
-
+const toService =()=>{
+    router.push('/services')
+}
 // 滚动动画处理
 const handleScroll = () => {
     // 获取所有需要动画的元素

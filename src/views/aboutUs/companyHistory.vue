@@ -1,10 +1,9 @@
 <template>
     <div class="development-course">
         <AboutBar />
-        <h2 class="title">发展历程</h2>
-        <p class="en-title">Development course</p>
-
-        <div class="timeline-container">
+        <h2 class="title" ref="titleDOM">发展历程</h2>
+        <p class="en-title" ref="entitleDOM">Development course</p>
+        <div class="timeline-container" ref="timelineDOM">
             <el-icon @click="prev" v-if="currentIndex > 0" class="circle">
                 <ArrowLeftBold />
             </el-icon>
@@ -35,9 +34,7 @@
 </template>
 
 <script setup>
-import {
-    ref
-} from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import {
     ArrowRightBold,
     ArrowLeftBold,
@@ -45,7 +42,6 @@ import {
     ArrowRight
 } from '@element-plus/icons-vue'
 import AboutBar from '@/components/AboutBar.vue'
-
 const timelineData = [{
     year: 2014,
     desc: '公司举办第二期上市辅导培训班 荣获优秀企业、先进集团和先进单位啊大阿萨大大啊大苏打撒旦啊大大撒旦大撒旦。'
@@ -76,10 +72,8 @@ const prev = () => {
         currentIndex.value--
         translateX.value += itemWidth
         timelineRef.value.style.transform = `translateX(${translateX.value}px)`
-
     }
 }
-
 const next = () => {
     if (currentIndex.value < timelineData.length - 3) {
         currentIndex.value++
@@ -88,6 +82,41 @@ const next = () => {
 
     }
 }
+const timelineDOM = ref(null)
+const entitleDOM = ref(null)
+const titleDOM = ref(null)
+const isElementInViewport = (el) => {
+    const rect = el.getBoundingClientRect()
+    return (
+        rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.85 &&
+        rect.bottom >= 0
+    )
+}
+
+const handleScroll = () => {
+    const elements = [
+        entitleDOM.value,
+        titleDOM.value,
+        timelineDOM.value
+    ].filter(el => el !== null && el !== undefined)
+    elements.forEach(el => {
+        if (isElementInViewport(el)) {
+            el.classList.add('animate-in')
+        }
+    })
+}
+// 组件挂载后添加滚动监听
+onMounted(() => {
+    // 初始检查一次
+    setTimeout(handleScroll, 100)
+
+    // 添加滚动监听
+    window.addEventListener('scroll', handleScroll)
+})
+// 组件卸载前移除监听
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>
@@ -102,14 +131,31 @@ const next = () => {
     color: #0056b3;
     margin-bottom: 10px;
     margin-left: 122px;
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 1s ease, transform 1s ease;
+
 }
 
+.title.animate-in {
+    opacity: 1;
+    transform: translateX(0);
+}
 .en-title {
     font-size: 25px;
     text-align: left;
     color: #999;
     margin-bottom: 30px;
     margin-left: 122px;
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 1s ease, transform 1s ease;
+    transition-delay: 0.2s;
+}
+
+.en-title.animate-in {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .timeline-container {
@@ -118,6 +164,14 @@ const next = () => {
     width: 100%;
     height: 50vh;
     position: relative;
+    opacity: 0;
+    transform: translateY(-50px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.timeline-container.animate-in {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .timeline-wrap {
@@ -138,7 +192,7 @@ const next = () => {
 }
 
 .timeline-item {
-    
+
     position: relative;
     display: flex;
     flex-direction: column;
