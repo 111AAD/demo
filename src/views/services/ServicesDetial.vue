@@ -1,5 +1,5 @@
 <template>
-<div>
+  <div>
     <div class="services-detail">
         <div class="left-section">
             <div class="square">
@@ -45,39 +45,33 @@
 </div>
 </template>
 
-<script>
-export default {
-    name: 'ServicesDetail',
-    data() {
-        return {
-            isHover: new Array(4).fill(false),
-            serviceList: [{
-                    description: '服务1',
-                    image: require('@/assets/bg.jpg')
-                },
-                {
-                    description: '服务2',
-                    image: require('@/assets/bg.jpg')
-                },
-                {
-                    description: '服务3',
-                    image: require('@/assets/bg.jpg')
-                },
-                {
-                    description: '服务4',
-                    image: require('@/assets/bg.jpg')
-                }
-            ]
-        }
-    },
-    methods: {
-        getCardStyle(index) {
-            return {
-                transform: this.isHover[index] ? 'rotateY(180deg) scale(1.05)' : 'rotateY(0deg) scale(1)'
-            }
-        }
-    }
-}
+<script setup>
+import { ref } from 'vue';
+const isHover = ref(new Array(4).fill(false));
+const serviceList = ref([
+  {
+    description: '服务1',
+    image: require('@/assets/bg.jpg')
+  },
+  {
+    description: '服务2',
+    image: require('@/assets/bg.jpg')
+  },
+  {
+    description: '服务3',
+    image: require('@/assets/bg.jpg')
+  },
+  {
+    description: '服务4',
+    image: require('@/assets/bg.jpg')
+  }
+]);
+
+const getCardStyle = (index) => {
+  return {
+    transform: isHover.value[index] ? 'rotateY(180deg) scale(1.05)' : 'rotateY(0deg) scale(1)'
+  }
+};
 </script>
 
 <style scoped>

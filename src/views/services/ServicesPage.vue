@@ -2,14 +2,14 @@
     <div class="services-page">
         <section class="solar-services">
             <div class="services-header container">
-                <h2 class="section-subtitle">Our Services</h2>
-                <h1 class="section-title">专业技术服务<br>——助力企业数字化转型</h1>
-                <p class="section-desc">
+                <h2 class="section-subtitle" ref="subtitleDOM">Our Services</h2>
+                <h1 class="section-title" ref="titleDOM">专业技术服务<br>——助力企业数字化转型</h1>
+                <p class="section-desc" ref="descDOM">
                     我们提供全方位的技术解决方案，从咨询到落地，为您的业务增长保驾护航
                 </p>
             </div>
 
-            <div class="services-grid container">
+            <div class="services-grid container" @click="toServiceDetail">
                 <div class="service-item" v-for="(service, index) in serviceList" :key="index">
                     <div class="service-icon">
                         <img :src="service.icon" :alt="service.title" />
@@ -79,7 +79,31 @@
 </template>
 
 <script setup>
-
+import { useRouter } from 'vue-router'
+import {ref} from 'vue'
+const router = useRouter()
+const subtitleDOM=ref(null)
+const titleDOM=ref(null)
+const descDOM=ref(null)
+const handleScroll = ()=>{
+    const elements=[
+        subtitleDOM.value,
+        titleDOM.value,
+        descDOM.value
+    ].filter(el=>el!==null&&el!==undefined)
+    elements.forEach(el=>{
+        if(isElementInViewport(el)){
+            el.classList.add('animate-in')
+        }
+    })
+}
+const isElementInViewport = () =>{
+    const rect = el.getBoundingClientRect()
+    return (
+        rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.85 &&
+        rect.bottom >= 0
+    )
+}
 
 const serviceList = [
     {
@@ -131,11 +155,8 @@ const items = [
         description: '通过大数据技术挖掘企业数据价值，提供精准的业务分析报告，辅助决策'
     }
 ]
-const toServiceDetail = (serviceId) => {
-    this.router.push({
-        path: '/servicesDetail',
-        query: { serviceId: serviceId }
-    });
+const toServiceDetail = () => {
+    router.push('/servicesDetail');
 }
 
 
@@ -147,7 +168,7 @@ const toServiceDetail = (serviceId) => {
     color: #333;
     background-color: #f9fafb;
     overflow-x: hidden;
-    margin-top:10vh;
+    margin-top: 10vh;
 }
 
 .container {
