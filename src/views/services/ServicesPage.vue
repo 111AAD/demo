@@ -9,7 +9,7 @@
                 </p>
             </div>
 
-            <div class="services-grid container" @click="toServiceDetail">
+            <div class="services-grid container" @click="toServiceDetail" ref="serviceitemDOM">
                 <div class="service-item" v-for="(service, index) in serviceList" :key="index">
                     <div class="service-icon">
                         <img :src="service.icon" :alt="service.title" />
@@ -32,7 +32,7 @@
                     满足不同规模企业的多样化需求
                 </p>
 
-                <div class="content-cards">
+                <div class="content-cards" ref="contentCardDOM">
                     <div class="content-card" @click="toServiceDetail(card.id)" v-for="(card, index) in items"
                         :key="index">
                         <div class="card-image-wrap">
@@ -80,24 +80,28 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import {ref} from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 const router = useRouter()
-const subtitleDOM=ref(null)
-const titleDOM=ref(null)
-const descDOM=ref(null)
-const handleScroll = ()=>{
-    const elements=[
+const subtitleDOM = ref(null)
+const titleDOM = ref(null)
+const descDOM = ref(null)
+const serviceitemDOM = ref(null)
+const contentCardDOM = ref(null)
+const handleScroll = () => {
+    const elements = [
         subtitleDOM.value,
         titleDOM.value,
-        descDOM.value
-    ].filter(el=>el!==null&&el!==undefined)
-    elements.forEach(el=>{
-        if(isElementInViewport(el)){
+        descDOM.value,
+        serviceitemDOM.value,
+        contentCardDOM.value
+    ].filter(el => el !== null && el !== undefined)
+    elements.forEach(el => {
+        if (isElementInViewport(el)) {
             el.classList.add('animate-in')
         }
     })
 }
-const isElementInViewport = () =>{
+const isElementInViewport = (el) => {
     const rect = el.getBoundingClientRect()
     return (
         rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.85 &&
@@ -159,7 +163,15 @@ const toServiceDetail = () => {
     router.push('/servicesDetail');
 }
 
+onMounted(() => {
+    setTimeout(handleScroll, 100)
 
+    window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>
@@ -206,6 +218,15 @@ const toServiceDetail = () => {
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 12px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease, box-shadow 0.3s ease;
+}
+
+.section-subtitle.animate-in,
+.section-title.animate-in {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .section-title {
@@ -214,6 +235,9 @@ const toServiceDetail = () => {
     margin-bottom: 20px;
     line-height: 1.3;
     font-weight: 700;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
 .section-desc {
@@ -222,6 +246,14 @@ const toServiceDetail = () => {
     max-width: 700px;
     margin: 0 auto;
     line-height: 1.7;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.section-desc.animate-in,.content-cards.animate-in,.services-grid.animate-in  {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 /* 服务卡片网格布局 */
@@ -229,7 +261,11 @@ const toServiceDetail = () => {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 30px;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: transform 0.8s ease, opacity 0.8s ease;
 }
+
 
 .service-item {
     background-color: #fff;
@@ -238,6 +274,7 @@ const toServiceDetail = () => {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     transition: all 0.3s ease;
     border: 1px solid #f3f4f6;
+
 }
 
 .service-item:hover {
@@ -339,6 +376,9 @@ const toServiceDetail = () => {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 30px;
+    opacity: 0;
+    transform: translateX(30px);
+    transition: transform 1s ease, opacity 1s ease;
 }
 
 .content-card {
