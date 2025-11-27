@@ -3,16 +3,16 @@
         <div class="product-container-top">
             <div class="banner-mask"></div>
             <div class="banner-content">
-                <p class="banner-subtitle">PRODUCT COLLECTION</p>
-                <h2 class="banner-title">为您提供优质服务</h2>
-                <p class="banner-desc">精选高品质产品，满足您的多样化需求</p>
+                <p class="banner-subtitle" ref="subtitleDOM">PRODUCT COLLECTION</p>
+                <h2 class="banner-title" ref="titleDOM">为您提供优质服务</h2>
+                <p class="banner-desc" ref="descDOM">精选高品质产品，满足您的多样化需求</p>
             </div>
         </div>
 
 
         <div class="product-container-middle">
             <div class="grid-item" v-for="(item, index) in currentPageItems" :key="index" @click="toDetail(item)">
-   
+
                 <div class="product-img-wrap">
                     <img :src="item.img" :alt="item.alt" class="product-img" loading="lazy" />
                 </div>
@@ -25,24 +25,44 @@
 
 
         <div class="fenye">
-            <el-pagination 
-                background 
-                layout="prev, pager, next" 
-                :total="total" 
-                :page-size="pageSize"
-                :current-page="currentPage" 
-                @current-change="change"
-                class="product-pagination"
-            />
+            <el-pagination background layout="prev, pager, next" :total="total" :page-size="pageSize"
+                :current-page="currentPage" @current-change="change" class="product-pagination" />
         </div>
     </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router';
-import { ref, computed } from 'vue'
-
-
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+const subtitleDOM = ref(null)
+const titleDOM = ref(null)
+const descDOM = ref(null)
+const handleScroll = () => {
+    const element = [
+        subtitleDOM.value,
+        titleDOM.value,
+        descDOM.value
+    ]
+    element.forEach(el => {
+        if (isElementInViewport(el)) {
+            el.classList.add('animate-in')
+        }
+    })
+}
+const isElementInViewport = (el) => {
+    const rect = el.getBoundingClientRect()
+    return (
+        rect.top <= (window.innerHeight || document.documentElement.classHeight) * 0.85
+        && rect.bottom >= 0
+    )
+}
+onMounted(() => {
+    setTimeout(handleScroll, 100)
+    window.addEventListener('scroll', handleScroll)
+})
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
+})
 const productList = [
     { id: 1, img: require('@/assets/bg.jpg'), alt: '图片1', des: "某某某产品的介绍,此示例是一个完整的用例" },
     { id: 2, img: require('@/assets/bg.jpg'), alt: '图片2', des: "某某某产品的介绍" },
@@ -88,16 +108,16 @@ const toDetail = (item) => {
 </script>
 
 <style scoped>
-
 .product-container {
     margin-top: 10vh;
     position: relative;
     width: 100%;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
+
 .product-container-top {
     height: 40vh;
-    min-height: 300px; 
+    min-height: 300px;
     width: 100%;
     background-image: url('@/assets/bg.jpg');
     background-size: cover;
@@ -118,13 +138,12 @@ const toDetail = (item) => {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%);
-    z-index: 1;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 100%);
+
 }
 
-/* Banner文字容器：避免文字溢出 */
 .banner-content {
-    margin-left: clamp(20px, 8vw, 100px); 
+    margin-left: clamp(20px, 8vw, 100px);
     z-index: 2;
     color: #fff;
 }
@@ -135,14 +154,28 @@ const toDetail = (item) => {
     margin: 0 0 8px;
     opacity: 0.9;
     letter-spacing: 2px;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.banner-subtitle.animate-in,
+.banner-title.animate-in,
+.banner-desc.animate-in {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .banner-title {
     font-size: clamp(1.8rem, 4vw, 2.5rem);
     font-weight: 600;
     margin: 0 0 12px;
-    text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
     line-height: 1.2;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 1s ease, transform 1s ease;
+    transition-delay: 0.2s;
 }
 
 .banner-desc {
@@ -150,6 +183,10 @@ const toDetail = (item) => {
     opacity: 0.9;
     max-width: 600px;
     line-height: 1.5;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 1s ease, transform 1s ease;
+    transition-delay: 0.4s;
 }
 
 /* 产品列表区域：响应式网格布局 */
@@ -162,20 +199,24 @@ const toDetail = (item) => {
     justify-content: center;
     padding: clamp(30px, 5vw, 60px) 20px;
     box-sizing: border-box;
-    max-width: 1400px; /* 限制最大宽度，避免过宽 */
+    max-width: 1400px;
+    /* 限制最大宽度，避免过宽 */
     margin: 0 auto;
 }
 
 /* 产品卡片：优化交互与样式 */
 .grid-item {
-    border-radius: 12px; /* 更大圆角：更现代 */
+    border-radius: 12px;
+    /* 更大圆角：更现代 */
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: all 0.3s ease; /* 统一过渡效果 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    /* 统一过渡效果 */
     text-align: left;
     background: #fff;
     cursor: pointer;
-    border: 1px solid #f0f0f0; /* 浅边框：提升精致度 */
+    border: 1px solid #f0f0f0;
+    /* 浅边框：提升精致度 */
     display: flex;
     flex-direction: column;
 }
@@ -183,15 +224,19 @@ const toDetail = (item) => {
 /* 卡片Hover效果：增强交互感 */
 .grid-item:hover {
     transform: translateY(-8px);
-    box-shadow: 0 8px 24px rgba(22, 93, 255, 0.15); /* 主色阴影 */
-    border-color: #e1eaff; /* 主色浅边框 */
+    box-shadow: 0 8px 24px rgba(22, 93, 255, 0.15);
+    /* 主色阴影 */
+    border-color: #e1eaff;
+    /* 主色浅边框 */
 }
 
 /* 图片容器：优化图片显示 */
 .product-img-wrap {
     width: 100%;
-    aspect-ratio: 4/3; /* 固定图片比例：避免变形 */
-    background: #f8f9fa; /* 加载占位背景 */
+    aspect-ratio: 4/3;
+    /* 固定图片比例：避免变形 */
+    background: #f8f9fa;
+    /* 加载占位背景 */
     overflow: hidden;
     position: relative;
 }
@@ -200,7 +245,8 @@ const toDetail = (item) => {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease; /* 图片缩放过渡 */
+    transition: transform 0.3s ease;
+    /* 图片缩放过渡 */
 }
 
 /* Hover时图片轻微缩放 */
@@ -211,7 +257,8 @@ const toDetail = (item) => {
 /* 产品信息区域：优化文字排版 */
 .product-info {
     padding: clamp(15px, 2vw, 20px);
-    flex: 1; /* 让信息区自动填充剩余高度 */
+    flex: 1;
+    /* 让信息区自动填充剩余高度 */
     display: flex;
     align-items: center;
 }
@@ -219,7 +266,8 @@ const toDetail = (item) => {
 .product-des {
     font-size: clamp(0.95rem, 1.5vw, 1.1rem);
     font-weight: 500;
-    color: #333; /* 主文字色：提升对比度 */
+    color: #333;
+    /* 主文字色：提升对比度 */
     margin: 0;
     max-height: 100px;
     display: -webkit-box;
@@ -229,17 +277,20 @@ const toDetail = (item) => {
     overflow: hidden;
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
-    line-height: 1.6; /* 行高：提升阅读体验 */
+    line-height: 1.6;
+    /* 行高：提升阅读体验 */
 }
 
 /* 分页区域：优化样式与主色统一 */
 .fenye {
-    height: auto; /* 取消固定高度：适配内容 */
+    height: auto;
+    /* 取消固定高度：适配内容 */
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px 0 40px; /* 上下内边距：避免底部过挤 */
+    padding: 20px 0 40px;
+    /* 上下内边距：避免底部过挤 */
     box-sizing: border-box;
 }
 
@@ -280,7 +331,8 @@ const toDetail = (item) => {
 
 @media (max-width: 480px) {
     .product-container-middle {
-        grid-template-columns: 1fr; /* 手机端1列布局 */
+        grid-template-columns: 1fr;
+        /* 手机端1列布局 */
         gap: 15px;
     }
 

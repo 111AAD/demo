@@ -1,7 +1,8 @@
 <template>
     <div class="container">
         <div class="main-carousel-section">
-            <el-carousel :interval="4000" :autoplay="true" height="100vh" indicator-position="outside" @change="onCarouselChange">
+            <el-carousel :interval="4000" :autoplay="true" height="100vh" indicator-position="outside"
+                @change="onCarouselChange">
                 <el-carousel-item v-for="(image, index) in images" :key="index">
                     <div class="bg-container">
                         <div class="bg-container-img" :style="{ backgroundImage: `url(${image})` }"></div>
@@ -30,15 +31,15 @@
                 </div>
                 <div class="stats">
                     <div class="stat-item">
-                        <span class="stat-number">120</span>
+                        <span class="stat-number">{{ number0 }}</span>
                         <span class="stat-label">项 专利发明</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">5,000</span>
+                        <span class="stat-number">{{ number1 }}</span>
                         <span class="stat-label">家 优质客户</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">2005</span>
+                        <span class="stat-number">{{ number2.toFixed(0) }}</span>
                         <span class="stat-label">年 成立于</span>
                     </div>
                 </div>
@@ -62,21 +63,16 @@
                 <button @click="toProduct" class="action-btn" style="background-color: #0066cc;">探索更多</button>
             </div>
             <div class="product-list">
-                <div 
-                    class="product-item" 
-                    v-for="(item, index) in products" 
-                    :key="item.id" 
-                    @click="toProductDetial(item.id)"
-                    :ref="el => { if (el) productItems[index] = el }"
-                >
+                <div class="product-item" v-for="(item, index) in products" :key="item.id"
+                    @click="toProductDetial(item.id)" :ref="el => { if (el) productItems[index] = el }">
                     <div class="product-img-container">
                         <img :src="item.url" alt="产品展示" class="product-img" />
                         <div class="product-overlay">
                             <button class="detail-btn">详情</button>
                         </div>
                     </div>
-                    <h1 class="product-name">{{item.name}}</h1>
-                    <p class="product-desc">{{item.desc}}</p>
+                    <h1 class="product-name">{{ item.name }}</h1>
+                    <p class="product-desc">{{ item.desc }}</p>
                 </div>
             </div>
         </div>
@@ -89,13 +85,8 @@
                 <button @click="toCutCase" class="action-btn">了解更多</button>
             </div>
             <div class="case-list">
-                <div 
-                    class="case-item" 
-                    v-for="(item, index) in 2" 
-                    :key="index" 
-                    @click="toCutCase"
-                    :ref="el => { if (el) caseItems[index] = el }"
-                >
+                <div class="case-item" v-for="(item, index) in 2" :key="index" @click="toCutCase"
+                    :ref="el => { if (el) caseItems[index] = el }">
                     <div class="case-img-container">
                         <img :src="require('@/assets/bg.jpg')" alt="客户案例" class="case-img" />
                         <div class="case-overlay">
@@ -113,6 +104,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { ref, onMounted, onUnmounted } from 'vue'
+import { number } from 'motion'
 
 const images = [require('@/assets/bg.jpg'), require('@/assets/bg3.jpg')]
 const subtitles = ['创新科技，引领未来', '专业服务，值得信赖']
@@ -123,30 +115,38 @@ const descriptions = [
 ]
 const products = ref([
     {
-    name:"某某某产品展示",
-    id:0,
-    desc:"产品描述内容，简要介绍产品的特点和优势。",
-    url:require('@/assets/bg.jpg')
-},{
-    name:"某某某产品展示",
-    id:1,
-    desc:"产品描述内容，简要介绍产品的特点和优势。",
-    url:require('@/assets/bg.jpg')
-},{
-    name:"某某某产品展示",
-    id:2,
-    desc:"产品描述内容，简要介绍产品的特点和优势。",
-    url:require('@/assets/bg.jpg')
-},{
-    name:"某某某产品展示",
-    id:2,
-    desc:"产品描述内容，简要介绍产品的特点和优势。",
-    url:require('@/assets/bg.jpg')
-},
+        name: "某某某产品展示",
+        id: 0,
+        desc: "产品描述内容，简要介绍产品的特点和优势。",
+        url: require('@/assets/bg.jpg')
+    }, {
+        name: "某某某产品展示",
+        id: 1,
+        desc: "产品描述内容，简要介绍产品的特点和优势。",
+        url: require('@/assets/bg.jpg')
+    }, {
+        name: "某某某产品展示",
+        id: 2,
+        desc: "产品描述内容，简要介绍产品的特点和优势。",
+        url: require('@/assets/bg.jpg')
+    }, {
+        name: "某某某产品展示",
+        id: 2,
+        desc: "产品描述内容，简要介绍产品的特点和优势。",
+        url: require('@/assets/bg.jpg')
+    },
 ]
 )
 const router = useRouter()
 const currentSlide = ref(0)
+//计时器动画
+const number0 = ref(0)
+const maxnum0 = ref(300)
+const number1 = ref(0)
+const maxnum1 = ref(3000)
+const number2 = ref(0)
+const maxnum2 = ref(2015)
+let timer = null
 
 // 引用DOM元素
 const introImage = ref(null)
@@ -161,19 +161,19 @@ const onCarouselChange = (index) => {
     currentSlide.value = index
 }
 
-const toAboutUs = () =>{
+const toAboutUs = () => {
     router.push('/about')
 }
-const toProductDetial = (id) =>{
-  router.push(`/products/${id}`);
+const toProductDetial = (id) => {
+    router.push(`/products/${id}`);
 }
-const toProduct = () =>{
+const toProduct = () => {
     router.push('/product')
 }
 const toCutCase = () => {
     router.push('/caseDetail')
 }
-const toService =()=>{
+const toService = () => {
     router.push('/services')
 }
 // 滚动动画处理
@@ -187,7 +187,7 @@ const handleScroll = () => {
         ...productItems.value,
         ...caseItems.value
     ].filter(el => el !== null && el !== undefined)
-    
+
     // 检查元素是否在视口中
     elements.forEach(el => {
         if (isElementInViewport(el)) {
@@ -204,19 +204,40 @@ const isElementInViewport = (el) => {
         rect.bottom >= 0
     )
 }
-
-// 组件挂载后添加滚动监听
 onMounted(() => {
-    // 初始检查一次
     setTimeout(handleScroll, 100)
-    
     // 添加滚动监听
     window.addEventListener('scroll', handleScroll)
+    //计数器
+    timer = setInterval(() => {
+        const step0 = maxnum0.value / 60
+        const step1 = maxnum1.value / 60
+        const step2 = maxnum2.value / 60
+        if (number0.value + step0 >= maxnum0.value) {
+            number0.value = maxnum0.value;
+            clearInterval(timer)
+        } else {
+            number0.value += step0
+        }
+        if (number1.value + step1 >= maxnum1.value) {
+            number1.value = maxnum1.value;
+            clearInterval(timer)
+        } else {
+            number1.value += step1
+        }
+        if (number2.value + step2 >= maxnum2.value) {
+            number2.value = maxnum2.value;
+            clearInterval(timer)
+        } else {
+            number2.value += step2
+        }
+    }, 16)
 })
 
 // 组件卸载前移除监听
 onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll)
+    if (timer) clearInterval(timer)
 })
 </script>
 
