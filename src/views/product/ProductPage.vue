@@ -10,7 +10,7 @@
         </div>
 
 
-        <div class="product-container-middle">
+        <div class="product-container-middle" ref="conDOM">
             <div class="grid-item" v-for="(item, index) in currentPageItems" :key="index" @click="toDetail(item)">
 
                 <div class="product-img-wrap">
@@ -37,11 +37,13 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 const subtitleDOM = ref(null)
 const titleDOM = ref(null)
 const descDOM = ref(null)
+const conDOM = ref(null)
 const handleScroll = () => {
     const element = [
         subtitleDOM.value,
         titleDOM.value,
-        descDOM.value
+        descDOM.value,
+        conDOM.value
     ]
     element.forEach(el => {
         if (isElementInViewport(el)) {
@@ -99,7 +101,7 @@ const change = (newPage) => {
 
 const toDetail = (item) => {
     router.push({
-        path:`/products/${item.id}`
+        path: `/products/${item.id}`
     });
 }
 
@@ -188,54 +190,53 @@ const toDetail = (item) => {
     transition-delay: 0.4s;
 }
 
-/* 产品列表区域：响应式网格布局 */
 .product-container-middle {
     width: 100%;
     display: grid;
-    /* 灵活列数：最小280px，自动填充 */
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: clamp(20px, 3vw, 40px);
     justify-content: center;
     padding: clamp(30px, 5vw, 60px) 20px;
     box-sizing: border-box;
     max-width: 1400px;
-    /* 限制最大宽度，避免过宽 */
     margin: 0 auto;
+    opacity: 0;
+    transform: translateY(-30px);
+    transition: opacity 1s ease, transform 1s ease;
 }
 
-/* 产品卡片：优化交互与样式 */
+.product-container-middle.animate-in {
+    opacity: 1;
+    transform: translateY(0)
+}
+
 .grid-item {
     border-radius: 12px;
-    /* 更大圆角：更现代 */
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
-    /* 统一过渡效果 */
+
     text-align: left;
     background: #fff;
     cursor: pointer;
     border: 1px solid #f0f0f0;
-    /* 浅边框：提升精致度 */
     display: flex;
     flex-direction: column;
+
 }
 
-/* 卡片Hover效果：增强交互感 */
+
 .grid-item:hover {
     transform: translateY(-8px);
     box-shadow: 0 8px 24px rgba(22, 93, 255, 0.15);
-    /* 主色阴影 */
     border-color: #e1eaff;
-    /* 主色浅边框 */
 }
 
-/* 图片容器：优化图片显示 */
+
 .product-img-wrap {
     width: 100%;
     aspect-ratio: 4/3;
-    /* 固定图片比例：避免变形 */
     background: #f8f9fa;
-    /* 加载占位背景 */
     overflow: hidden;
     position: relative;
 }
@@ -245,19 +246,18 @@ const toDetail = (item) => {
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
-    /* 图片缩放过渡 */
+
 }
 
-/* Hover时图片轻微缩放 */
+
 .grid-item:hover .product-img {
     transform: scale(1.03);
 }
 
-/* 产品信息区域：优化文字排版 */
+
 .product-info {
     padding: clamp(15px, 2vw, 20px);
     flex: 1;
-    /* 让信息区自动填充剩余高度 */
     display: flex;
     align-items: center;
 }
@@ -266,7 +266,6 @@ const toDetail = (item) => {
     font-size: clamp(0.95rem, 1.5vw, 1.1rem);
     font-weight: 500;
     color: #333;
-    /* 主文字色：提升对比度 */
     margin: 0;
     max-height: 100px;
     display: -webkit-box;
@@ -277,23 +276,18 @@ const toDetail = (item) => {
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
     line-height: 1.6;
-    /* 行高：提升阅读体验 */
 }
 
-/* 分页区域：优化样式与主色统一 */
 .fenye {
     height: auto;
-    /* 取消固定高度：适配内容 */
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px 0 40px;
-    /* 上下内边距：避免底部过挤 */
     box-sizing: border-box;
 }
 
-/* 分页组件样式：统一主色 #165dff（与联系页呼应） */
 .product-pagination {
     --el-pagination-active-color: #165dff;
     --el-pagination-hover-color: #165dff;
