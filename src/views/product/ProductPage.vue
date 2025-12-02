@@ -64,6 +64,7 @@ onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll)
 })
 const productList = [
+    { id: 0, img: require('@/assets/bg.jpg'), alt: '图片15', des: "某某某产品的介绍,此示例是一个完整的用例" },
     { id: 1, img: require('@/assets/bg.jpg'), alt: '图片1', des: "某某某产品的介绍,此示例是一个完整的用例" },
     { id: 2, img: require('@/assets/bg.jpg'), alt: '图片2', des: "某某某产品的介绍" },
     { id: 3, img: require('@/assets/bg.jpg'), alt: '图片3', des: "某某某产品的介绍" },
@@ -78,7 +79,6 @@ const productList = [
     { id: 12, img: require('@/assets/bg.jpg'), alt: '图片12', des: "某某某产品的介绍" },
     { id: 13, img: require('@/assets/bg.jpg'), alt: '图片13', des: "某某某产品的介绍,此示例是一个完整的用例" },
     { id: 14, img: require('@/assets/bg.jpg'), alt: '图片14', des: "某某某产品的介绍,此示例是一个完整的用例" },
-    { id: 15, img: require('@/assets/bg.jpg'), alt: '图片15', des: "某某某产品的介绍,此示例是一个完整的用例" },
 ];
 
 const pageSize = 6;
@@ -99,8 +99,7 @@ const change = (newPage) => {
 
 const toDetail = (item) => {
     router.push({
-        path: '/productDetail',
-        query: { id: item.id }
+        path:`/products/${item.id}`
     });
 }
 

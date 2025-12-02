@@ -5,12 +5,10 @@
             <p class="product-subtitle">{{ product.description }}</p>
             <span class="product-version">版本 {{ product.version }}</span>
         </div>
-
         <div class="product-content">
             <div class="product-image">
                 <img :src="product.image" :alt="product.name">
             </div>
-
             <div class="product-details">
                 <h2 class="section-title">产品特性</h2>
                 <ul class="features-list">
@@ -51,8 +49,6 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-
-
 const props = defineProps({
     id: {
         type: [Number, String],
