@@ -60,7 +60,7 @@ const toDetail = (item) => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color:#2886DE;
+    background-color:#ffffff;
 
 }
 

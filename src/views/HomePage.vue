@@ -30,12 +30,12 @@
                     <p>Company profile</p>
                 </div>
                 <div class="stats">
-                    <div class="stat-item">
-                        <span class="stat-number">{{ number0 }}</span>
+                    <div class="stat-item" ref="numberRef">
+                        <span class="stat-number">{{ number0.toFixed(0) }}</span>
                         <span class="stat-label">项 专利发明</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">{{ number1 }}</span>
+                        <span class="stat-number">{{ number1.toFixed(0) }}</span>
                         <span class="stat-label">家 优质客户</span>
                     </div>
                     <div class="stat-item">
@@ -104,7 +104,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { ref, onMounted, onUnmounted } from 'vue'
-import { number } from 'motion'
 
 const images = [require('@/assets/bg.jpg'), require('@/assets/bg3.jpg')]
 const subtitles = ['创新科技，引领未来', '专业服务，值得信赖']
@@ -147,7 +146,8 @@ const maxnum1 = ref(3000)
 const number2 = ref(0)
 const maxnum2 = ref(2015)
 let timer = null
-
+const numberRef = ref(null)
+let isBegin = false
 // 引用DOM元素
 const introImage = ref(null)
 const introContent = ref(null)
@@ -176,6 +176,42 @@ const toCutCase = () => {
 const toService = () => {
     router.push('/services')
 }
+const numberAnimation = () => {
+    if (numberRef.value == null)
+        return
+    if (!isElementInViewport(numberRef.value))
+        return
+    else
+        isBegin = true
+    //计数器
+    timer = setInterval(() => {
+        //计算每个数字的「每帧增量」（总步数=分母，分母越大，动画越慢）
+        const step0 = maxnum0.value / 100
+        const step1 = maxnum1.value / 100
+        const step2 = maxnum2.value / 100
+        let flag = true
+        if (number0.value + step0 >= maxnum0.value) {
+            number0.value = maxnum0.value;
+        } else {
+            number0.value += step0
+            flag = false
+        }
+        if (number1.value + step1 >= maxnum1.value) {
+            number1.value = maxnum1.value;
+        } else {
+            number1.value += step1
+            flag = false
+        }
+        if (number2.value + step2 >= maxnum2.value) {
+            number2.value = maxnum2.value;
+        } else {
+            number2.value += step2
+            flag = false
+        }
+        if (flag)
+            clearInterval(timer)
+    }, 16)
+}
 // 滚动动画处理
 const handleScroll = () => {
     // 获取所有需要动画的元素
@@ -194,6 +230,8 @@ const handleScroll = () => {
             el.classList.add('animate-in')
         }
     })
+    if (!isBegin)
+        numberAnimation()
 }
 
 // 检查元素是否在视口中
@@ -205,33 +243,10 @@ const isElementInViewport = (el) => {
     )
 }
 onMounted(() => {
+    //延迟100ms后再触发
     setTimeout(handleScroll, 100)
     // 添加滚动监听
     window.addEventListener('scroll', handleScroll)
-    //计数器
-    timer = setInterval(() => {
-        const step0 = maxnum0.value / 60
-        const step1 = maxnum1.value / 60
-        const step2 = maxnum2.value / 60
-        if (number0.value + step0 >= maxnum0.value) {
-            number0.value = maxnum0.value;
-            clearInterval(timer)
-        } else {
-            number0.value += step0
-        }
-        if (number1.value + step1 >= maxnum1.value) {
-            number1.value = maxnum1.value;
-            clearInterval(timer)
-        } else {
-            number1.value += step1
-        }
-        if (number2.value + step2 >= maxnum2.value) {
-            number2.value = maxnum2.value;
-            clearInterval(timer)
-        } else {
-            number2.value += step2
-        }
-    }, 16)
 })
 
 // 组件卸载前移除监听

@@ -50,20 +50,15 @@
         </section>
     </div>
 </template>
-
-<script>
-export default {
-    name: 'CaseDetail'
-}
-</script>
-
 <script setup>
+import { forEach } from 'core-js/core/array';
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
-
-const caseData = ref({
+import { useRouter,useRoute } from 'vue-router';
+const route = useRoute()
+const router = useRouter()
+let Id = route.query.id
+const totalCaseData = ref({
+    id:0,
     title: "title",
     client: {
         logoText: "零售集团",
@@ -75,15 +70,34 @@ const caseData = ref({
     projectType: "数字化转型解决方案",
     technologies: ["Vue3", "Node.js", "云计算", "大数据分析"],
     teamSize: "8人团队",
-
     details: {
         background: "随着电商冲击和消费者行为变化，传统零售企业面临巨大挑战。优品零售集团希望通过数字化转型提升运营效率，优化客户体验，实现线上线下融合发展。",
         challenges: "系统老旧、数据孤岛、线上线下业务割裂、客户体验不一致、缺乏数据驱动的决策支持。",
         solution: "我们为优品零售集团打造了一套完整的数字化解决方案，包括新零售中台系统、会员统一管理平台、智能数据分析系统等，实现了业务流程数字化、数据驱动决策和全渠道客户体验一致化。",
         results: "项目实施后，优品零售集团实现了运营效率提升40%，客户复购率增加25%，线上线下销售额分别增长18%和32%，成功实现了数字化转型目标。"
     }
+},
+{
+    id: 1,
+    title: "连锁餐饮全链路数字化升级案例",
+    client: {
+        logoText: "餐饮集团",
+        name: "食味轩餐饮管理集团",
+        industry: "餐饮行业",
+        description: "一家拥有300+直营门店、50+加盟门店的连锁餐饮企业，覆盖火锅、快餐、茶饮多品类，业务遍及全国15个省市。"
+    },
+    cooperationTime: "2023年1月 - 2023年9月",
+    projectType: "餐饮全链路数字化解决方案",
+    technologies: ["React", "Java", "物联网IoT", "AI智能分析", "小程序开发"],
+    teamSize: "12人团队",
+    details: {
+        background: "后疫情时代，食味轩面临门店运营成本高、点餐效率低、供应链管理混乱、会员体系分散等问题，亟需通过数字化手段降本增效，提升门店标准化运营能力和客户消费体验。",
+        challenges: "各门店系统不互通、人工点餐占比超70%、供应链库存周转率低、会员数据分散无法精准营销、门店运营数据无实时监控体系。",
+        solution: "为食味轩搭建了一体化餐饮数字化中台，包含智能点餐收银系统、供应链管理平台、会员营销系统、门店数据监控大屏四大核心模块；通过物联网设备打通后厨与前厅数据，AI分析消费行为实现精准推荐，小程序完成会员统一管理与线上点单。",
+        results: "项目落地后，食味轩门店点餐效率提升65%，人工成本降低30%，供应链库存周转率提升50%，会员复购率增长35%，单店日均营业额提升28%，加盟门店标准化运营达标率从60%提升至95%。"
+    }
 });
-
+const caseDate = forEach()
 const formatDetailTitle = (key) => {
     const map = {
         background: '项目背景',

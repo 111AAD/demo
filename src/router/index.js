@@ -21,8 +21,8 @@ const routes = [
   { path: '/honor', component: HonorPage },
   { path: '/product', component: ProductPage },
   { path: '/customerCase', component: CustomerCase },
-  { path: '/caseDetail', component: CaseDetail },
-  {path: '/products/:id', component: ProductDetail,props: true},
+  { path: '/caseDetail', component: CaseDetail, props: true },
+  { path: '/products', component: ProductDetail, props: true },
 ];
 
 const router = createRouter({
