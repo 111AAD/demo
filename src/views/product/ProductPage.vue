@@ -101,7 +101,10 @@ const change = (newPage) => {
 
 const toDetail = (item) => {
     router.push({
-        path: `/products/${item.id}`
+        path: '/products',
+        query:{
+            id: item.id
+        }
     });
 }
 

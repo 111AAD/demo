@@ -21,17 +21,17 @@
 import { useRouter } from 'vue-router'
 const router = useRouter();
 const caseList = [{
+    id: 0,
+    img: require('@/assets/bg.jpg'),
+    title: '这是项目名称',
+    des: '这是项目的具体内容'
+}, {
     id: 1,
     img: require('@/assets/bg.jpg'),
     title: '这是项目名称',
     des: '这是项目的具体内容'
 }, {
     id: 2,
-    img: require('@/assets/bg.jpg'),
-    title: '这是项目名称',
-    des: '这是项目的具体内容'
-}, {
-    id: 3,
     img: require('@/assets/bg.jpg'),
     title: '这是项目名称',
     des: '这是项目的具体内容'

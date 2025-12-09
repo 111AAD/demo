@@ -1,15 +1,15 @@
 <template>
     <div v-if="product" class="product-container">
         <div class="product-header">
-            <h1 class="product-title">{{ product.name }}</h1>
-            <p class="product-subtitle">{{ product.description }}</p>
+            <h1 class="product-title" ref="titleDOM">{{ product.name }}</h1>
+            <p class="product-subtitle" ref="subtitleDOM">{{ product.description }}</p>
             <span class="product-version">版本 {{ product.version }}</span>
         </div>
         <div class="product-content">
-            <div class="product-image">
+            <div class="product-image" ref="imageDOM">
                 <img :src="product.image" :alt="product.name">
             </div>
-            <div class="product-details">
+            <div class="product-details" ref="detailesDOM">
                 <h2 class="section-title">产品特性</h2>
                 <ul class="features-list">
                     <li v-for="feature in product.features" :key="feature">
@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <div class="download-section">
+        <div class="download-section" ref="downloadDOM">
             <h2 class="download-title">立即下载</h2>
             <div class="download-options">
                 <button v-for="download in product.downloads" :key="download.platform"
@@ -48,43 +48,72 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-const props = defineProps({
-    id: {
-        type: [Number, String],
-        required: true
-    }
-})
-
+import { ref, computed, onUnmounted, onMounted } from 'vue';
+import {useRoute} from 'vue-router'
+const route = useRoute();
+let Id = route.query.id
+const titleDOM = ref(null)
+const subtitleDOM = ref(null)
+const imageDOM = ref(null)
+const detailesDOM = ref(null)
+const downloadDOM = ref(null)
+const handleScroll = () => {
+    const element = [
+        titleDOM.value,
+        subtitleDOM.value,
+        imageDOM.value,
+        detailesDOM.value,
+        downloadDOM.value
+    ]
+    element.forEach(el => {
+        if (isElementInViewport(el)) {
+            el.classList.add('animate-in')
+        }
+    });
+}
+const isElementInViewport = (el) => {
+    const rect = el.getBoundingClientRect()
+    return (
+        rect.top <= (window.innerHeight || document.documentElement.classHeight) * 0.85
+        && rect.bottom >= 0
+    )
+}
 const productDatabase = ref([
-  {
-    id: 0,
-    name: "Vue Master Pro",
-    description: "一款专为 Vue 开发者设计的全能 IDE",
-    version: "2.5.0",
-    image: require('@/assets/bg.jpg'),
-    features: ['智能代码提示', '内置调试工具'],
-    specifications: [{ name: "内存", value: "8GB" }],
-    downloads: [{ platform: "windows", icon: "fab fa-windows", size: "125 MB", url: "#" }],
-    systemRequirements: "Windows 10+",
-    lastUpdated: "2024-05-20"
-  },
-  {
-    id: 1,
-    name: "React Power Toolkit",
-    description: "提升 React 开发效率的必备工具集",
-    version: "1.8.3",
-    image: require('@/assets/bg.jpg'),
-    features: ['性能分析', 'Hooks代码生成'],
-    specifications: [{ name: "内存", value: "16GB" }],
-    downloads: [{ platform: "mac", icon: "fab fa-apple", size: "145 MB", url: "#" }],
-    systemRequirements: "macOS 10.15+",
-    lastUpdated: "2024-06-01"
-  }
+    {
+        id: 0,
+        name: "Vue Master Pro",
+        description: "一款专为 Vue 开发者设计的全能 IDE",
+        version: "2.5.0",
+        image: require('@/assets/bg.jpg'),
+        features: ['智能代码提示', '内置调试工具'],
+        specifications: [{ name: "内存", value: "8GB" }],
+        downloads: [{ platform: "windows", icon: "fab fa-windows", size: "125 MB", url: "#" }],
+        systemRequirements: "Windows 10+",
+        lastUpdated: "2024-05-20"
+    },
+    {
+        id: 1,
+        name: "React Power Toolkit",
+        description: "提升 React 开发效率的必备工具集",
+        version: "1.8.3",
+        image: require('@/assets/bg.jpg'),
+        features: ['性能分析', 'Hooks代码生成'],
+        specifications: [{ name: "内存", value: "16GB" }],
+        downloads: [{ platform: "mac", icon: "fab fa-apple", size: "145 MB", url: "#" }],
+        systemRequirements: "macOS 10.15+",
+        lastUpdated: "2024-06-01"
+    }
 ]);
-const product = computed(()=>{
-    const id = Number(props.id);
-    return productDatabase.value.find(p=>p.id==id);
+const product = computed(() => {
+    const id = Number(Id);
+    return productDatabase.value.find(p => p.id === id);
+})
+onMounted(() => {
+    setTimeout(handleScroll, 100)
+    window.addEventListener('scroll', handleScroll)
+})
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
 })
 </script>
 
@@ -109,12 +138,25 @@ const product = computed(()=>{
     font-size: 2.8rem;
     margin-bottom: 10px;
     font-weight: 700;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1s ease;
+    transform: translateX(-30px);
 }
 
 .product-subtitle {
     font-size: 1.2rem;
     opacity: 0.9;
     margin-bottom: 20px;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1s ease;
+    transform: translateX(-30px);
+
+}
+
+.product-title.animate-in,
+.product-subtitle.animate-in {
+    transform: translateX(0);
+    opacity: 1;
 }
 
 .product-version {
@@ -139,6 +181,9 @@ const product = computed(()=>{
     justify-content: center;
     align-items: center;
     padding: 40px;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1s ease;
+    transform: translateX(-30px);
 }
 
 .product-image img {
@@ -151,7 +196,18 @@ const product = computed(()=>{
     flex: 1;
     min-width: 300px;
     padding: 40px;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1s ease;
+    transform: translateX(30px);
 }
+
+.product-details.animate-in,
+.product-image.animate-in {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+
 
 .section-title {
     font-size: 1.5rem;
@@ -199,8 +255,14 @@ const product = computed(()=>{
     background: #f8f9fa;
     padding: 30px 40px;
     border-top: 1px solid #eee;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1s ease;
+    transform: translateY(-30px);
 }
-
+.download-section.animate-in{
+    opacity: 1;
+    transform: translateY(0);
+}
 .download-title {
     font-size: 1.3rem;
     margin-bottom: 20px;
