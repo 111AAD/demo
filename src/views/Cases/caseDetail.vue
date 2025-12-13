@@ -3,7 +3,7 @@
         <!-- 页面头部 -->
         <div class="case-header" ref="headerDOM">
             <button class="back-btn" @click="goBack">
-                <span>←</span> 返回案例列表
+                <span>←</span> 返回
             </button>
             <h1 class="case-title">{{ caseData.title }}</h1>
         </div>

@@ -64,7 +64,7 @@
             </div>
             <div class="product-list">
                 <div class="product-item" v-for="(item, index) in products" :key="item.id"
-                    @click="toProductDetial(item.id)" :ref="el => { if (el) productItems[index] = el }">
+                    @click="toProductDetial(item)" :ref="el => { if (el) productItems[index] = el }">
                     <div class="product-img-container">
                         <img :src="item.url" alt="产品展示" class="product-img" />
                         <div class="product-overlay">
@@ -85,7 +85,7 @@
                 <button @click="toCutCase" class="action-btn">了解更多</button>
             </div>
             <div class="case-list">
-                <div class="case-item" v-for="(item, index) in 2" :key="index" @click="toCutCase"
+                <div class="case-item" v-for="(item, index) in 2" :key="index" @click="toCutCase(index)"
                     :ref="el => { if (el) caseItems[index] = el }">
                     <div class="case-img-container">
                         <img :src="require('@/assets/bg.jpg')" alt="客户案例" class="case-img" />
@@ -118,24 +118,27 @@ const products = ref([
         id: 0,
         desc: "产品描述内容，简要介绍产品的特点和优势。",
         url: require('@/assets/bg.jpg')
-    }, {
+    },
+    {
         name: "某某某产品展示",
         id: 1,
         desc: "产品描述内容，简要介绍产品的特点和优势。",
         url: require('@/assets/bg.jpg')
-    }, {
-        name: "某某某产品展示",
-        id: 2,
-        desc: "产品描述内容，简要介绍产品的特点和优势。",
-        url: require('@/assets/bg.jpg')
-    }, {
+    },
+    {
         name: "某某某产品展示",
         id: 2,
         desc: "产品描述内容，简要介绍产品的特点和优势。",
         url: require('@/assets/bg.jpg')
     },
-]
-)
+    {
+        name: "某某某产品展示",
+        id: 3,
+        desc: "产品描述内容，简要介绍产品的特点和优势。",
+        url: require('@/assets/bg.jpg')
+    },
+])
+
 const router = useRouter()
 const currentSlide = ref(0)
 //计时器动画
@@ -164,54 +167,66 @@ const onCarouselChange = (index) => {
 const toAboutUs = () => {
     router.push('/about')
 }
-const toProductDetial = (id) => {
-    router.push(`/products/${id}`);
+const toProductDetial = (item) => {
+    router.push({
+        path: '/products',
+        query: {
+            id: item.id
+        }
+    });
 }
 const toProduct = () => {
     router.push('/product')
 }
-const toCutCase = () => {
-    router.push('/caseDetail')
+const toCutCase = (index) => {
+    router.push({
+        path: '/caseDetail',
+        query: {
+            id: index
+        }
+    })
 }
 const toService = () => {
     router.push('/services')
 }
+
+// 计数器动画
 const numberAnimation = () => {
-    if (numberRef.value == null)
-        return
-    if (!isElementInViewport(numberRef.value))
-        return
-    else
-        isBegin = true
-    //计数器
+    if (!numberRef.value || isBegin) return
+    if (!isElementInViewport(numberRef.value)) return
+
+    isBegin = true
     timer = setInterval(() => {
-        //计算每个数字的「每帧增量」（总步数=分母，分母越大，动画越慢）
         const step0 = maxnum0.value / 100
         const step1 = maxnum1.value / 100
         const step2 = maxnum2.value / 100
         let flag = true
+
         if (number0.value + step0 >= maxnum0.value) {
             number0.value = maxnum0.value;
         } else {
             number0.value += step0
             flag = false
         }
+
         if (number1.value + step1 >= maxnum1.value) {
             number1.value = maxnum1.value;
         } else {
             number1.value += step1
             flag = false
         }
+
         if (number2.value + step2 >= maxnum2.value) {
             number2.value = maxnum2.value;
         } else {
             number2.value += step2
             flag = false
         }
-        if (flag)
-            clearInterval(timer)
+
+        if (flag) clearInterval(timer)
     }, 16)
 }
+
 // 滚动动画处理
 const handleScroll = () => {
     // 获取所有需要动画的元素
@@ -230,8 +245,8 @@ const handleScroll = () => {
             el.classList.add('animate-in')
         }
     })
-    if (!isBegin)
-        numberAnimation()
+
+    if (!isBegin) numberAnimation()
 }
 
 // 检查元素是否在视口中
@@ -242,14 +257,12 @@ const isElementInViewport = (el) => {
         rect.bottom >= 0
     )
 }
+
 onMounted(() => {
-    //延迟100ms后再触发
     setTimeout(handleScroll, 100)
-    // 添加滚动监听
     window.addEventListener('scroll', handleScroll)
 })
 
-// 组件卸载前移除监听
 onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll)
     if (timer) clearInterval(timer)
@@ -258,9 +271,7 @@ onUnmounted(() => {
 
 <style scoped>
 .container {
-    background-color: transparent;
     margin-top: 83.4px;
-    overflow-x: hidden;
 }
 
 .main-carousel-section {
@@ -365,7 +376,6 @@ onUnmounted(() => {
     background: transparent;
     transition: all 0.3s ease;
     position: relative;
-    z-index: 0;
     overflow: hidden;
 }
 
@@ -511,11 +521,26 @@ onUnmounted(() => {
 }
 
 /* 产品中心部分 */
-.product-center {
+.product-center,
+.case-section {
     width: 100%;
     padding: 5rem 10%;
     box-sizing: border-box;
+}
+
+.product-center {
     background-color: #fff;
+}
+
+.case-section {
+    background-color: #f8f9fa;
+}
+
+.title-action {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 3rem;
 }
 
 .section-header {
@@ -558,157 +583,13 @@ onUnmounted(() => {
     letter-spacing: 1px;
 }
 
-/* 标题和按钮所在行 */
-.title-action {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 3rem;
-}
-
 .product-list {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
 }
 
-/* 单个产品项样式 */
-.product-item {
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease, transform 0.8s ease, box-shadow 0.3s ease;
-}
-
-.product-item.animate-in {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.product-item:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-}
-
-.product-img-container {
-    position: relative;
-    overflow: hidden;
-    height: 250px;
-}
-
-.product-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.product-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 102, 204, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.product-item:hover .product-overlay {
-    opacity: 1;
-}
-
-.product-item:hover .product-img {
-    transform: scale(1.05);
-}
-
-/* 产品名称样式 */
-.product-name {
-    font-size: 1.25rem;
-    color: #333;
-    margin: 1.5rem 1.5rem 0.5rem;
-    font-weight: 600;
-}
-
-/* 产品描述样式 */
-.product-desc {
-    font-size: 0.95rem;
-    color: #666;
-    margin: 0 1.5rem 1.5rem;
-    line-height: 1.5;
-}
-
-/* 产品详情按钮样式 - 保留原有样式 */
-.detail-btn {
-    background-color: #fff;
-    color: #0066cc;
-    border: 1px solid #0066cc;
-    padding: 8px 50px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    position: relative;
-    overflow: hidden;
-    transition: all 1s cubic-bezier(0.25, 0.8, 0.25, 1);
-    z-index: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-/* 背景填充动画层 */
-.detail-btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background-color: #0066cc;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.8s ease, height 0.8s ease;
-    z-index: -1;
-}
-
-/* 悬停状态动画 */
-.detail-btn:hover {
-    color: #fff;
-    border-color: transparent;
-}
-
-/* 背景填充效果 */
-.detail-btn:hover::after {
-    width: 300px;
-    height: 300px;
-}
-
-/* 客户案例部分 */
-.case-section {
-    width: 100%;
-    padding: 5rem 10%;
-    box-sizing: border-box;
-    background-color: #f8f9fa;
-}
-
-/* 案例列表容器 */
-.case-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2.5rem;
-}
-
-/* 单个案例项 */
+.product-item,
 .case-item {
     background-color: #fff;
     border-radius: 8px;
@@ -721,22 +602,33 @@ onUnmounted(() => {
     transition: opacity 0.8s ease, transform 0.8s ease, box-shadow 0.3s ease;
 }
 
+.product-item.animate-in,
 .case-item.animate-in {
     opacity: 1;
     transform: translateY(0);
 }
 
+.product-item:hover,
 .case-item:hover {
     transform: translateY(-10px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
+.product-img-container,
 .case-img-container {
     position: relative;
     overflow: hidden;
+}
+
+.product-img-container {
+    height: 250px;
+}
+
+.case-img-container {
     height: 350px;
 }
 
+.product-img,
 .case-img {
     width: 100%;
     height: 100%;
@@ -744,19 +636,27 @@ onUnmounted(() => {
     transition: transform 0.5s ease;
 }
 
+.product-overlay,
 .case-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     opacity: 0;
     transition: opacity 0.3s ease;
+}
+
+.product-overlay {
+    background: rgba(0, 102, 204, 0.8);
+}
+
+.case-overlay {
+    background: rgba(0, 0, 0, 0.7);
+    flex-direction: column;
     color: #fff;
     text-align: center;
     padding: 2rem;
@@ -773,26 +673,81 @@ onUnmounted(() => {
     opacity: 0.8;
 }
 
+.product-item:hover .product-overlay,
 .case-item:hover .case-overlay {
     opacity: 1;
 }
 
+.product-item:hover .product-img,
 .case-item:hover .case-img {
     transform: scale(1.05);
 }
 
-/* 案例名称 */
+.product-name,
 .case-name {
     font-size: 1.25rem;
     color: #333;
-    padding: 1.5rem;
-    margin: 0;
     font-weight: 600;
     transition: color 0.3s ease;
 }
 
+.product-name {
+    margin: 1.5rem 1.5rem 0.5rem;
+}
+
+.product-desc {
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0 1.5rem 1.5rem;
+    line-height: 1.5;
+}
+
+.case-name {
+    padding: 1.5rem;
+    margin: 0;
+}
+
 .case-item:hover .case-name {
     color: #0066cc;
+}
+
+.detail-btn {
+    background-color: #fff;
+    color: #0066cc;
+    border: 1px solid #0066cc;
+    padding: 8px 50px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+    transition: all 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 1;
+}
+
+.detail-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background-color: #0066cc;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.8s ease, height 0.8s ease;
+    z-index: -1;
+}
+
+.detail-btn:hover {
+    color: #fff;
+    border-color: transparent;
+}
+
+.detail-btn:hover::after {
+    width: 300px;
+    height: 300px;
 }
 
 /* 响应式调整 */
@@ -805,7 +760,7 @@ onUnmounted(() => {
         padding-top: 200px;
     }
 
-    .main-title {
+    .content-wrapper .main-title {
         font-size: 2.5rem;
     }
 }
@@ -837,7 +792,7 @@ onUnmounted(() => {
         text-align: center;
     }
 
-    .main-title {
+    .content-wrapper .main-title {
         font-size: 2rem;
     }
 
@@ -861,7 +816,6 @@ onUnmounted(() => {
         height: 250px;
     }
 
-    /* 移动端按钮调整 */
     .action-btn {
         width: 8rem;
         height: 2.2rem;
