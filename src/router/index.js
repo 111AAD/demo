@@ -1,28 +1,63 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomePage from '../views/HomePage.vue';
-import AboutPage from '@/views/aboutUs/aboutUs.vue';
-import ServicesPage from '../views/services/ServicesPage.vue';
-import Contact from '../views/contactUs/contactUs.vue';
-import ServicesDetail from '../views/services/ServicesDetial.vue';
-import CompanyHistory from '@/views/aboutUs/companyHistory.vue';
-import HonorPage from '@/views/aboutUs/honorPage.vue';
-import ProductPage from '@/views/product/ProductPage.vue';
-import ProductDetail from '@/views/product/productDetail.vue';
-import CustomerCase from '@/views/Cases/customerCase.vue';
-import CaseDetail from '@/views/Cases/caseDetail.vue';
-
 const routes = [
-  { path: '/', component: HomePage },
-  { path: '/about', component: AboutPage },
-  { path: '/services', component: ServicesPage },
-  { path: '/contact', component: Contact },
-  { path: '/servicesdetail', component: ServicesDetail },
-  { path: '/companyHistory', component: CompanyHistory },
-  { path: '/honor', component: HonorPage },
-  { path: '/product', component: ProductPage },
-  { path: '/customerCase', component: CustomerCase },
-  { path: '/caseDetail', component: CaseDetail, props: true },
-  { path: '/products', component: ProductDetail, props: true },
+  {
+    path: '/',
+    name: 'Home',
+    props:true,
+    component: () => import(/* webpackChunkName: "home" */ '../views/HomePage.vue')
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import(/* webpackChunkName: "about" */ '@/views/aboutUs/aboutUs.vue')
+  },
+  {
+    path: '/services',
+    name: 'Services',
+    component: () => import(/* webpackChunkName: "services" */ '../views/services/ServicesPage.vue')
+  },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: () => import(/* webpackChunkName: "contact" */ '../views/contactUs/contactUs.vue')
+  },
+  {
+    path: '/servicesdetail',
+    name: 'ServicesDetail',
+    component: () => import(/* webpackChunkName: "services-detail" */ '../views/services/ServicesDetial.vue')
+  },
+  {
+    path: '/companyHistory',
+    name: 'CompanyHistory',
+    component: () => import(/* webpackChunkName: "company-history" */ '@/views/aboutUs/companyHistory.vue')
+  },
+  {
+    path: '/honor',
+    name: 'Honor',
+    component: () => import(/* webpackChunkName: "honor" */ '@/views/aboutUs/honorPage.vue')
+  },
+  {
+    path: '/product',
+    name: 'Product',
+    component: () => import(/* webpackChunkName: "product" */ '@/views/product/ProductPage.vue')
+  },
+  {
+    path: '/customerCase',
+    name: 'CustomerCase',
+    component: () => import(/* webpackChunkName: "customer-case" */ '@/views/Cases/customerCase.vue')
+  },
+  {
+    path: '/caseDetail',
+    name: 'CaseDetail',
+    component: () => import(/* webpackChunkName: "case-detail" */ '@/views/Cases/caseDetail.vue'),
+    props: true
+  },
+  {
+    path: '/products',
+    name: 'ProductDetail',
+    component: () => import(/* webpackChunkName: "product-detail" */ '@/views/product/productDetail.vue'),
+    props: true
+  },
 ];
 
 const router = createRouter({

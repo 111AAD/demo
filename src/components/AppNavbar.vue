@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <img src="@/assets/公司新闻.png" class="logo" alt="公司logo" />
+    <img src="@/assets/科技1.png" class="logo" alt="公司logo" />
 
 
     <div class="navbar">
