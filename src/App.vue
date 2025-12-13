@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    
      <AppNavbar/>
     <router-view />
     <AppFooter />
@@ -8,7 +7,6 @@
 </template>
 <script>
 import AppNavbar from './components/AppNavbar.vue';
-import {ref , onMounted} from 'vue';
 import AppFooter from './components/Footer.vue';
 export default {
   name: 'App',
@@ -16,31 +14,8 @@ export default {
     AppNavbar,
     AppFooter,
   },
-setup(){
-  const isLoading = ref(true);
-  const loadingImage = require('../src/assets/maodei.gif');
-     const preloadImage = (src) => {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.src = src;
-        img.onload = () => {
-          resolve();
-        };
-      });
-    };
-
-    onMounted(async () => {
-      await preloadImage(loadingImage); 
-      setTimeout(() => {
-        isLoading.value = false; 
-      }, 2000);
-    });
-
-    return { isLoading, loadingImage };
-}
 }
 </script>
-
 <style>
 body {
   margin: 0; 
